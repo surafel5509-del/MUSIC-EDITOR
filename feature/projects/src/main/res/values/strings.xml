@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="projects_title">Projects</string>
+    <string name="projects_new">New project</string>
+    <string name="projects_search_hint">Search projects</string>
+    <string name="projects_settings">Settings and sync</string>
+    <string name="projects_empty_title">No projects yet</string>
+    <string name="projects_empty_body">Tap + to start your first session — pick a template or start from scratch.</string>
+    <string name="projects_open">Open</string>
+    <string name="projects_duplicate">Duplicate</string>
+    <string name="projects_archive">Archive</string>
+    <string name="projects_unarchive">Unarchive</string>
+    <string name="projects_delete">Delete</string>
+    <string name="projects_favorite">Toggle favorite</string>
+    <string name="projects_limit_title">Plan limit reached</string>
+    <string name="projects_upgrade">Upgrade</string>
+    <string name="projects_not_now">Not now</string>
+    <string name="projects_name_label">Project name</string>
+    <string name="projects_template_label">Template</string>
+    <string name="projects_bpm_label">Tempo</string>
+    <string name="projects_create">Create project</string>
+</resources>

@@ -1,0 +1,43 @@
+# Gradle / Android Studio
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+release/
+
+# Kotlin
+.kotlin/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Node (backend edge functions)
+backend/supabase/functions/**/node_modules/
+backend/supabase/functions/**/dist/
+
+# Secrets — never commit
+google-services.json
+keystore.properties
+*.jks
+*.keystore
+secrets.xml
+firebase-service-account.json
+
+# OS
+.DS_Store
+Thumbs.db

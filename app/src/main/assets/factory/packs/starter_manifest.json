@@ -1,0 +1,18 @@
+{
+  "packId": "pack_starter_loops",
+  "name": "StudioOne Starter Pack",
+  "description": "48 royalty-free loops and one-shots across hip-hop, lo-fi, and electronic — bundled for offline first-run.",
+  "curator": "StudioOne Audio Team",
+  "license": "ROYALTY_FREE",
+  "sizeBytes": 52428800,
+  "items": [
+    { "id": "s1_dr_kick_808_01", "name": "808 Kick C", "category": "ONE_SHOTS", "bpm": null, "key": "C", "file": "drums/808_kick_c.wav", "sampleRate": 48000, "channels": 1 },
+    { "id": "s1_dr_snare_trap_01", "name": "Trap Snare", "category": "ONE_SHOTS", "bpm": 140, "key": null, "file": "drums/trap_snare.wav", "sampleRate": 48000, "channels": 1 },
+    { "id": "s1_dr_hat_roll_01", "name": "Hat Roll 16th", "category": "ONE_SHOTS", "bpm": 140, "key": null, "file": "drums/hat_roll.wav", "sampleRate": 48000, "channels": 1 },
+    { "id": "s1_lp_bass_lofi_am", "name": "Lo-Fi Bass Loop Am 84", "category": "LOOPS", "bpm": 84, "key": "A Minor", "file": "loops/lofi_bass_am84.wav", "sampleRate": 48000, "channels": 1 },
+    { "id": "s1_lp_keys_rnb_eb", "name": "Rhodes Loop Eb 92", "category": "LOOPS", "bpm": 92, "key": "D# Minor", "file": "loops/rhodes_eb92.wav", "sampleRate": 48000, "channels": 2 },
+    { "id": "s1_lp_drum_boombap", "name": "Boom Bap Kit Loop 90", "category": "LOOPS", "bpm": 90, "key": null, "file": "loops/boombap_90.wav", "sampleRate": 48000, "channels": 2 },
+    { "id": "s1_lp_synth_house", "name": "House Stab Fm 126", "category": "LOOPS", "bpm": 126, "key": "F Minor", "file": "loops/house_stab_fm126.wav", "sampleRate": 48000, "channels": 2 },
+    { "id": "s1_mi_chords_prog_01", "name": "Neo-Soul Progression (MIDI)", "category": "MIDI_PACKS", "bpm": 88, "key": "G Minor", "file": "midi/neosoul_prog.mid", "sampleRate": 0, "channels": 0 }
+  ]
+}

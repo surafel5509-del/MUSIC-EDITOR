@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Backup policy: projects (documents + metadata) ARE backed up; caches,
+  decoded PCM, downloads, and takes are NOT (they are re-derivable and huge).
+-->
+<full-backup-content>
+    <include domain="database" path="." />
+    <include domain="sharedpref" path="." />
+    <include domain="file" path="projects/" />
+    <exclude domain="cache" path="." />
+    <exclude domain="file" path="packs/" />
+</full-backup-content>

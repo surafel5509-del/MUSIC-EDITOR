@@ -1,0 +1,63 @@
+# StudioOne Mobile — Fastlane
+# Local release flow mirrors CI: `bundle exec fastlane beta` builds, tests,
+# and uploads to the internal track with changelog generation.
+
+default_platform(:android)
+
+platform :android do
+  desc "Run all unit tests + lint"
+  lane :test do
+    gradle(task: "test lintDebug", properties: { "ci" => true })
+  end
+
+  desc "Build debug APK and install on connected device"
+  lane :dev do
+    gradle(task: "installDebug")
+  end
+
+  desc "Deploy to Play internal track"
+  lane :beta do
+    test
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      properties: {
+        "ci" => true,
+        "S1_SUPABASE_URL" => ENV["S1_SUPABASE_URL"],
+        "S1_SUPABASE_ANON_KEY" => ENV["S1_SUPABASE_ANON_KEY"],
+      },
+    )
+    upload_to_play_store(
+      track: "internal",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      json_key_data: ENV["PLAY_JSON_KEY_DATA"],
+      skip_upload_metadata: false,
+      release_status: "draft", # manual promote after QA pass
+    )
+  end
+
+  desc "Promote internal -> closed beta"
+  lane :promote_beta do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "beta",
+      json_key_data: ENV["PLAY_JSON_KEY_DATA"],
+      skip_upload_apk: true, skip_upload_aab: true,
+    )
+  end
+
+  desc "Production rollout (staged 10%)"
+  lane :production do
+    upload_to_play_store(
+      track: "production",
+      rollout: "0.1",
+      json_key_data: ENV["PLAY_JSON_KEY_DATA"],
+      skip_upload_apk: true, skip_upload_aab: true,
+    )
+  end
+
+  desc "Download latest crash groups from Play Console (triage)"
+  lane :crashes do
+    puts "Use Play Console UI or the Crashlytics export API; see docs/RELIABILITY.md"
+  end
+end

@@ -1,0 +1,6 @@
+First public release:
+• Multitrack DAW: recording, MIDI piano roll, drum machine & synths
+• 25+ effects, mixer with LUFS metering, export WAV/MP3/FLAC/AAC + stems
+• Real-time collaboration, share links, comments
+• Loop library with BPM/key search, social feed
+• Accessibility: TalkBack, color-blind palettes, large targets
