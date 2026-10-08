@@ -1,0 +1,50 @@
+# StudioOne Mobile release lanes.
+default_platform(:android)
+
+platform :android do
+  desc "Run unit tests"
+  lane :test do
+    gradle(task: "testDebugUnitTest")
+  end
+
+  desc "Build debug APK"
+  lane :debug do
+    gradle(task: "assembleDebug")
+  end
+
+  desc "Build release AAB"
+  lane :bundle do
+    gradle(
+      task: "bundleRelease",
+      properties: {
+        "studioone.supabase.url" => ENV["SUPABASE_URL"],
+        "studioone.supabase.anonKey" => ENV["SUPABASE_ANON_KEY"],
+      },
+    )
+  end
+
+  desc "Ship to Play Store internal track"
+  lane :internal do
+    bundle
+    upload_to_play_store(
+      track: "internal",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      release_status: "draft",
+      skip_upload_changelogs: true,
+    )
+  end
+
+  desc "Promote internal -> production (staged)"
+  lane :promote do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "production",
+      rollout: "0.1",
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+end

@@ -1,0 +1,14 @@
+{
+  "id": "preset-drumkit-808",
+  "name": "808 Kit",
+  "targetId": "drums",
+  "category": "Drums",
+  "author": "StudioOne",
+  "params": {
+    "kick_decay": 0.42,
+    "kick_pitch": 43.0,
+    "snare_tone": 190.0,
+    "hat_decay_closed": 0.05,
+    "hat_decay_open": 0.38
+  }
+}

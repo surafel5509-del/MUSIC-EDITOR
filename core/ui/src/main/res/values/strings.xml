@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_rationale_record_audio">StudioOne needs microphone access to record audio tracks.</string>
+    <string name="permission_rationale_bluetooth">Bluetooth access lets StudioOne talk to BLE MIDI controllers.</string>
+    <string name="permission_denied_permanently">Permission permanently denied. Enable it in system settings to use this feature.</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library_title">Library</string>
+    <string name="library_search">Search loops, one-shots, packs</string>
+    <string name="library_import">Import sample</string>
+    <string name="library_preview">Preview</string>
+    <string name="library_add_to_project">Add to project</string>
+    <string name="library_download">Download</string>
+    <string name="library_empty">No content yet — import a sample or download a pack.</string>
+    <string name="library_analyzing">Analyzing…</string>
+</resources>

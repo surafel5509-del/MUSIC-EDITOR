@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="settings_audio_engine">Audio engine</string>
+    <string name="settings_sample_rate">Sample rate</string>
+    <string name="settings_buffer_size">Buffer size</string>
+    <string name="settings_low_latency">Low-latency path (AAudio)</string>
+    <string name="settings_opensles_fallback">Force OpenSL ES fallback</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_high_contrast">High contrast</string>
+    <string name="settings_color_vision">Color-blind assist</string>
+    <string name="settings_large_targets">Large touch targets</string>
+    <string name="settings_accessibility">Accessibility</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_sign_in">Sign in</string>
+    <string name="settings_sign_out">Sign out</string>
+    <string name="settings_data">Data</string>
+    <string name="settings_backup">Back up projects</string>
+    <string name="settings_latency_report">Measured latency</string>
+</resources>

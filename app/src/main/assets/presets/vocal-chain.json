@@ -1,0 +1,16 @@
+{
+  "id": "chain-vocal",
+  "name": "Vocal Chain",
+  "targetId": "chain",
+  "category": "Vocals",
+  "author": "StudioOne",
+  "params": {
+    "effects": [
+      { "type": "NOISE_GATE", "params": { "threshold_db": -55.0 } },
+      { "type": "COMPRESSOR", "params": { "threshold_db": -20.0, "ratio": 3.5, "attack_ms": 8.0, "release_ms": 140.0 } },
+      { "type": "PARAMETRIC_EQ", "params": { "band1_freq": 110.0, "band1_gain": -4.0, "band3_freq": 8000.0, "band3_gain": 2.5 } },
+      { "type": "DE_ESSER", "params": { "threshold_db": -28.0, "freq": 6800.0 } },
+      { "type": "REVERB", "params": { "decay": 1.6, "mix": 0.22 } }
+    ]
+  }
+}

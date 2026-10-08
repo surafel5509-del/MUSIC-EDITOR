@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="instruments_title">Instruments</string>
+    <string name="instruments_pads">Pads</string>
+    <string name="instruments_keys">Keys</string>
+    <string name="instruments_sequencer">Step Sequencer</string>
+    <string name="instruments_browser">Sounds</string>
+    <string name="instruments_cd_pad">Drum pad %1$d</string>
+    <string name="instruments_cd_key">Piano key %1$s</string>
+    <string name="instruments_run">Run</string>
+    <string name="instruments_stop">Stop</string>
+</resources>

@@ -1,0 +1,10 @@
+StudioOne Mobile is a professional music production studio for Android:
+multitrack recording, MIDI instruments, effects, mixing and mastering with
+real-time cloud collaboration.
+
+- Low-latency multitrack recording (Oboe/AAudio engine, <10ms on pro devices)
+- Piano roll, drum pads, step sequencer, subtractive/FM-ready synth engine
+- Parametric EQ, compression, reverb, delays and more — on every channel
+- LUFS metering, stems and master export
+- Loop library with BPM/key detection
+- Invite collaborators and work on the same project live

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pianoroll_title">Piano Roll</string>
+    <string name="pianoroll_select_tool">Select</string>
+    <string name="pianoroll_draw_tool">Draw</string>
+    <string name="pianoroll_erase_tool">Erase</string>
+    <string name="pianoroll_quantize">Quantize</string>
+    <string name="pianoroll_snap">Snap</string>
+    <string name="pianoroll_chord">Chord</string>
+    <string name="pianoroll_velocity">Velocity</string>
+    <string name="pianoroll_no_clip">Open a MIDI clip from the arrange view</string>
+</resources>
