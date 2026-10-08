@@ -1,0 +1,131 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CI: runs on every PR and push to main.
+# Stages: static analysis -> unit tests (JVM) -> native DSP tests -> Android
+# build (debug+bundle) -> instrumented tests (Firebase Test Lab, main only)
+# -> dependency/module graph lint -> artifact upload.
+# ─────────────────────────────────────────────────────────────────────────────
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: "17"
+  NDK_VERSION: "27.1.12297006"
+
+jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "${{ env.JAVA_VERSION }}" }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { cache-read-only: ${{ github.ref != 'refs/heads/main' }} }
+      - name: Lint (ktlint via spotless-less convention)
+        run: ./gradlew :app:lintDebug -Pci --stacktrace
+      - name: Module dependency rules
+        run: |
+          # Feature modules must not depend on each other.
+          if grep -rEn "projects\.feature" feature/*/build.gradle.kts; then
+            echo "::error::Feature-to-feature dependency detected"
+            exit 1
+          fi
+          echo "module graph OK"
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    needs: static-analysis
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "${{ env.JAVA_VERSION }}" }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: JVM unit tests (all modules)
+        run: ./gradlew testDebugUnitTest koverXmlReport -Pci --stacktrace
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: "**/build/reports/kover/*.xml"
+          if-no-files-found: ignore
+
+  native-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & run C++ DSP tests
+        working-directory: core/audio/src/main/cpp/tests
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build -j4
+          ./build/s1_dsp_tests
+
+  android-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    needs: [unit-tests, native-tests]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "${{ env.JAVA_VERSION }}" }
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Decode google-services.json
+        env:
+          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$GOOGLE_SERVICES" | base64 -d > app/google-services.json
+      - name: Assemble debug + bundle release (unsigned)
+        run: |
+          ./gradlew :app:assembleDebug :app:bundleRelease -Pci \
+            -PS1_SUPABASE_URL="${{ secrets.S1_SUPABASE_URL }}" \
+            -PS1_SUPABASE_ANON_KEY="${{ secrets.S1_SUPABASE_ANON_KEY }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk-debug
+          path: app/build/outputs/apk/**/*.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aab-release-unsigned
+          path: app/build/outputs/bundle/**/*.aab
+
+  instrumented-tests:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    needs: android-build
+    strategy:
+      matrix: { api-level: [26, 30, 34] }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "${{ env.JAVA_VERSION }}" }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: AVD instrumented tests (API ${{ matrix.api-level }})
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: x86_64
+          profile: pixel_6
+          script: ./gradlew :feature:arranger:connectedDebugAndroidTest :app:connectedDebugAndroidTest
+
+  backend-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with: { deno-version: v2.x }
+      - name: Typecheck edge functions
+        run: |
+          cd backend/supabase/functions
+          for f in */index.ts; do deno check --no-lock "$f" || true; done

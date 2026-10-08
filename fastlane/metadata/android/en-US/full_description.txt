@@ -1,0 +1,22 @@
+Turn your phone into a full music studio.
+
+RECORD & PRODUCE
+• Low-latency multitrack recording (under 10 ms round trip on supported devices)
+• Punch-in, loop recording, count-in, monitoring FX, 24-bit capture
+• Piano roll with quantize/swing/scale-lock, step sequencer, drum pads, MPE
+• 25+ studio effects: parametric EQ, compressors, reverbs, delays, amp sims
+• Virtual instruments: subtractive/FM-style synths, multisample sampler, drum kits
+• Pro mixer: faders, sends, buses, LUFS loudness metering, spectrum analyzer
+
+COLLABORATE & SHARE
+• Real-time co-editing with conflict-free merging — works offline and syncs
+• Comments anchored to the timeline, share links with roles, remix forks
+• Publish to the StudioOne feed or export WAV, MP3, FLAC, AAC with metadata
+
+FOR MUSICIANS, PRODUCERS & PODCASTERS
+• Templates: beat, song, podcast, live recording, remix, vocal session
+• Royalty-free loop library searchable by BPM and key
+• TalkBack support, high-contrast and color-blind themes, large touch targets
+
+Start free — no account required. StudioOne Pro unlocks unlimited projects,
+all instruments & effects, lossless/stem export, and 20 GB cloud storage.

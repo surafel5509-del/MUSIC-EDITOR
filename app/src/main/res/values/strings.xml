@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StudioOne</string>
+    <string name="nav_projects">Projects</string>
+    <string name="nav_feed">Feed</string>
+    <string name="nav_library">Sounds</string>
+    <string name="nav_profile">You</string>
+</resources>

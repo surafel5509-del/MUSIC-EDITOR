@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "presets": [
+    {
+      "id": "vox-radio-gate-eq-comp",
+      "name": "Radio Vocal Chain",
+      "chain": [
+        { "plugin": "GATE", "params": { "0": -48, "1": 0.8, "2": 60, "3": 200, "4": -40 } },
+        { "plugin": "PARAMETRIC_EQ", "params": { "0": 1, "1": 1, "2": 90, "4": -24, "5": 1, "6": 4, "7": 0.9, "9": 3, "10": 320, "12": 1, "13": 4, "14": 3200, "15": 1.2, "17": 6, "20": 10000, "22": 0.8 } },
+        { "plugin": "COMPRESSOR", "params": { "0": -22, "1": 3.5, "2": 8, "3": 140, "4": 6, "5": 4 } },
+        { "plugin": "DE_ESSER", "params": { "0": 6800, "1": -32, "2": 90 } }
+      ],
+      "tags": ["vocal", "podcast", "broadcast"]
+    },
+    {
+      "id": "808-sub-tilt",
+      "name": "808 Sub Tilt",
+      "chain": [
+        { "plugin": "PARAMETRIC_EQ", "params": { "0": 1, "1": 6, "2": 55, "4": 4.5, "5": 1, "6": 4, "7": 1, "9": 250, "12": -3 } },
+        { "plugin": "COMPRESSOR", "params": { "0": -16, "1": 6, "2": 4, "3": 90, "6": 0.7 } }
+      ],
+      "tags": ["bass", "trap", "808"]
+    },
+    {
+      "id": "guitar-amp-crunch",
+      "name": "Crunch Amp",
+      "chain": [
+        { "plugin": "GATE", "params": { "0": -52 } },
+        { "plugin": "AMP_SIM", "params": { "0": 22, "1": 0.4, "2": -3, "3": 2 } },
+        { "plugin": "PARAMETRIC_EQ", "params": { "0": 1, "1": 0, "2": 90, "5": 1, "6": 0, "7": 5200 } }
+      ],
+      "tags": ["guitar", "rock", "amp"]
+    },
+    {
+      "id": "space-plate",
+      "name": "Space Plate",
+      "chain": [
+        { "plugin": "PLATE_REVERB", "params": { "0": 0.82, "1": 0.45, "2": 1, "3": -18, "4": -6, "5": 40 } }
+      ],
+      "tags": ["reverb", "ambient"]
+    },
+    {
+      "id": "master-stream-safe",
+      "name": "Streaming Master (-14 LUFS)",
+      "chain": [
+        { "plugin": "PARAMETRIC_EQ", "params": { "0": 1, "1": 1, "2": 32, "4": -18, "5": 1, "6": 0, "7": 92, "9": 3, "10": 100, "12": 1.5 } },
+        { "plugin": "COMPRESSOR", "params": { "0": -12, "1": 1.8, "2": 15, "3": 180, "5": 2, "6": 0.35 } },
+        { "plugin": "LIMITER", "params": { "0": -1, "1": 60 } }
+      ],
+      "tags": ["master", "loudness"]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "Project",
+  "id": "template-beat-140",
+  "name": "Trap Beat 140",
+  "template": "BEAT",
+  "tempoMap": { "markers": [ { "bar": 0.0, "bpm": 140.0, "curve": "STEP" } ] },
+  "timeSignature": { "numerator": 4, "beatUnit": 4 },
+  "key": { "tonicPc": 1, "scale": "NATURAL_MINOR" },
+  "sampleRate": 48000,
+  "bitDepth": "FLOAT_32",
+  "tracks": [
+    { "id": "tpl-drums", "name": "Drums", "type": "INSTRUMENT", "color": "CORAL", "orderIndex": 0,
+      "instrument": { "instrument": "DRUM_MACHINE", "presetId": "sp16-init", "macros": [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5] } },
+    { "id": "tpl-808", "name": "808", "type": "INSTRUMENT", "color": "AMBER", "orderIndex": 1,
+      "instrument": { "instrument": "BASS_SYNTH", "presetId": "lowend-init", "macros": [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5] } },
+    { "id": "tpl-keys", "name": "Keys", "type": "INSTRUMENT", "color": "INDIGO", "orderIndex": 2,
+      "instrument": { "instrument": "SUBTRACTIVE_SYNTH", "presetId": "volt1-init", "macros": [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5] } },
+    { "id": "tpl-melody", "name": "Melody", "type": "INSTRUMENT", "color": "TEAL", "orderIndex": 3,
+      "instrument": { "instrument": "SUBTRACTIVE_SYNTH", "presetId": "volt1-init", "macros": [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5] } }
+  ],
+  "buses": [ { "id": "master", "name": "Master", "kind": "MASTER" } ],
+  "durationBars": 64.0
+}
