@@ -10,6 +10,7 @@ import com.studioone.core.network.collab.CrdtEngine
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.PostgresAction
 import io.github.jan.supabase.realtime.RealtimeChannel
 import io.github.jan.supabase.realtime.channel
@@ -81,7 +82,7 @@ class SupabaseCollabClient @Inject constructor(
         scope.launch {
             channel.postgresChangeFlow<PostgresAction.Insert>(schema = "public") {
                 table = "collab_ops"
-                filter = "project_id=eq.${projectId.value}"
+                filter("project_id", FilterOperator.EQ, projectId.value)
             }.collect { change ->
                 val payload = change.record["op_json"]?.jsonPrimitive?.content ?: return@collect
                 val op = CollabOpSerializer.decode(payload) ?: return@collect
