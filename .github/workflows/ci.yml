@@ -27,6 +27,9 @@ jobs:
     name: Unit tests
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: read
+      checks: write
     steps:
       - uses: actions/checkout@v5
 
@@ -43,7 +46,51 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Run unit tests
-        run: gradle testDebugUnitTest --stacktrace --no-daemon
+        run: |
+          set -o pipefail
+          set +e
+          gradle testDebugUnitTest --stacktrace --no-daemon 2>&1 | tee gradle-out.txt
+          rc=$?
+          set -e
+          echo "::group::Last 80 lines"
+          tail -80 gradle-out.txt
+          echo "::endgroup::"
+          exit $rc
+
+      - name: Surface failure log (temporary debug aid)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          out = open('gradle-out.txt', errors='replace').read()
+          tail = out[-50000:]
+          chunks = [tail[i:i+30000] for i in range(0, len(tail), 30000)] or ['empty log']
+          annotations = [{
+              'path': '.github/workflows/ci.yml',
+              'start_line': 1, 'end_line': 1,
+              'annotation_level': 'failure',
+              'title': f'Gradle output {i+1}/{len(chunks)}',
+              'message': c,
+          } for i, c in enumerate(chunks)]
+          body = {
+              'name': 'gradle-failure-log',
+              'head_sha': os.environ['GITHUB_SHA'],
+              'status': 'completed',
+              'conclusion': 'failure',
+              'output': {
+                  'title': 'Gradle failure output',
+                  'summary': 'Temporary: captured tail of the Gradle build log.',
+                  'annotations': annotations,
+              },
+          }
+          with open('/tmp/checkrun.json', 'w') as f:
+              json.dump(body, f)
+          repo = os.environ['GITHUB_REPOSITORY']
+          subprocess.run(['gh', 'api', '--method', 'POST', f'repos/{repo}/check-runs',
+                          '--input', '/tmp/checkrun.json'], check=True)
+          PY
 
       - name: Upload test reports
         if: failure()
