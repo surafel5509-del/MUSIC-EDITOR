@@ -86,10 +86,11 @@ class MidiPortManager @Inject constructor(
         manager.openDevice(info, { device ->
             if (device == null) return@openDevice
             openDevices += device
-            for (portIndex in 0 until device.inputPortCount) {
-                val port = device.openInputPort(portIndex) ?: continue
+            for (portInfo in info.ports) {
+                if (portInfo.type != MidiDeviceInfo.PortInfo.TYPE_INPUT) continue
+                val port = device.openInputPort(portInfo.portNumber) ?: continue
                 port.connect(object : MidiReceiver() {
-                    override fun onSend(msg: ByteArray, offset: Int, count: Long, timestamp: Long) {
+                    override fun onSend(msg: ByteArray, offset: Int, count: Int, timestamp: Long) {
                         val slice = msg.copyOfRange(offset, offset + count.toInt())
                         parser.feed(slice, slice.size, timestamp).forEach { event ->
                             events.tryEmit(event)
