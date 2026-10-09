@@ -62,7 +62,7 @@ class SupabaseCollabClient @Inject constructor(
         val state = connectionStates.getOrPut(projectId.value) { MutableStateFlow(CollabConnectionState.DISCONNECTED) }
         state.value = CollabConnectionState.CONNECTING
 
-        val channel = supabase.realtime.channel("project:${projectId.value}")
+        val channel = supabase.realtime.channel("project:${projectId.value}") {}
         channels[projectId.value] = channel
 
         // Ops arrive as broadcast messages on event "op".
