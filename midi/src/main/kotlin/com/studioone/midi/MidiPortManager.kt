@@ -79,7 +79,11 @@ class MidiPortManager @Inject constructor(
     /** Stream of events from all opened ports. */
     fun events(): Flow<MidiEvent> = events.asSharedFlow()
 
-    /** Opens every input port of [entry]; events flow into [events]. */
+    /**
+     * Opens every data-producing port of [entry]; events flow into [events].
+     * In the Android MIDI API, device -> app data arrives on *output* ports
+     * (MidiOutputPort extends MidiSender and exposes connect()).
+     */
     fun openDevice(entry: MidiDeviceEntry) {
         val manager = midiManager ?: return
         val info = manager.devices.firstOrNull { it.id == entry.id } ?: return
@@ -87,8 +91,8 @@ class MidiPortManager @Inject constructor(
             if (device == null) return@openDevice
             openDevices += device
             for (portInfo in info.ports) {
-                if (portInfo.type != MidiDeviceInfo.PortInfo.TYPE_INPUT) continue
-                val port = device.openInputPort(portInfo.portNumber) ?: continue
+                if (portInfo.type != MidiDeviceInfo.PortInfo.TYPE_OUTPUT) continue
+                val port = device.openOutputPort(portInfo.portNumber) ?: continue
                 port.connect(object : MidiReceiver() {
                     override fun onSend(msg: ByteArray, offset: Int, count: Int, timestamp: Long) {
                         val slice = msg.copyOfRange(offset, offset + count.toInt())
