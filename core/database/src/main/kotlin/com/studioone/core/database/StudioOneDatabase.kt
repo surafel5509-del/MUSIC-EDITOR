@@ -54,7 +54,7 @@ abstract class StudioOneDatabase : RoomDatabase() {
 
         fun build(context: Context): StudioOneDatabase =
             Room.databaseBuilder(context, StudioOneDatabase::class.java, NAME)
-                .fallbackToDestructionDuringDevelopment() // replaced by migrations before 1.0
+                .fallbackToDestructiveMigration() // replaced by migrations before 1.0
                 .build()
     }
 }

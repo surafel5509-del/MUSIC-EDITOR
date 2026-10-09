@@ -65,7 +65,9 @@ jobs:
           python3 - <<'PY'
           import json, os, subprocess
           out = open('gradle-out.txt', errors='replace').read()
-          tail = out[-50000:]
+          errs = [ln for ln in out.splitlines()
+                  if ln.startswith(('e: ', 'error:', 'FAILURE', '* What went wrong'))]
+          tail = ('\n'.join(errs)[:30000] if errs else '') + '\n\n' + out[-20000:]
           chunks = [tail[i:i+30000] for i in range(0, len(tail), 30000)] or ['empty log']
           annotations = [{
               'path': '.github/workflows/ci.yml',
