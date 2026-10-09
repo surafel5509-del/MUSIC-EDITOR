@@ -45,7 +45,8 @@ object NetworkModule {
             supabaseUrl = BuildConfig.SUPABASE_URL,
             supabaseKey = BuildConfig.SUPABASE_ANON_KEY,
         ) {
-            httpEngine = io.ktor.client.engine.okhttp.OkHttp(okHttpClient)
+            // The OkHttp Ktor engine on the classpath is auto-discovered; it
+            // supports WebSockets, which the Realtime plugin requires.
             install(Auth)
             install(Postgrest)
             install(Storage)

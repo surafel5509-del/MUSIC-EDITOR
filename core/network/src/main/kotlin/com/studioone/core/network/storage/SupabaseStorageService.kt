@@ -3,6 +3,7 @@ package com.studioone.core.network.storage
 import com.studioone.core.common.error.StudioOneException
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.storage.storage
+import io.ktor.http.ContentType
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,7 +20,8 @@ class SupabaseStorageService @Inject constructor(private val supabase: SupabaseC
     suspend fun upload(bucket: String, path: String, bytes: ByteArray, contentType: String): String {
         try {
             supabase.storage.from(bucket).upload(path, bytes) {
-                this.contentType = contentType
+                this.contentType = runCatching { ContentType.parse(contentType) }
+                    .getOrDefault(ContentType.Application.OctetStream)
                 upsert = true
             }
             return publicUrl(bucket, path)
@@ -30,7 +32,7 @@ class SupabaseStorageService @Inject constructor(private val supabase: SupabaseC
 
     suspend fun download(bucket: String, path: String): ByteArray {
         try {
-            return supabase.storage.from(bucket).download(path)
+            return supabase.storage.from(bucket).downloadAuthenticated(path)
         } catch (e: Exception) {
             throw StudioOneException.Network("Download failed: ${e.message}", e)
         }

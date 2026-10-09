@@ -38,8 +38,8 @@ class SupabaseAuthService @Inject constructor(private val supabase: SupabaseClie
                     )
                 }
                 is SessionStatus.NotAuthenticated -> AuthState.SignedOut
-                is SessionStatus.LoadingFromStorage -> AuthState.SignedOut
-                is SessionStatus.NetworkError -> AuthState.Error("Network error during sign-in")
+                SessionStatus.Initializing -> AuthState.SignedOut
+                is SessionStatus.RefreshFailure -> AuthState.Error("Session refresh failed")
             }
         }
 

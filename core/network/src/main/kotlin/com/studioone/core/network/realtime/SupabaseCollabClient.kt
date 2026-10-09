@@ -67,7 +67,7 @@ class SupabaseCollabClient @Inject constructor(
 
         // Ops arrive as broadcast messages on event "op".
         scope.launch {
-            channel.broadcastFlow<OpEnvelope> { event = "op" }
+            channel.broadcastFlow<OpEnvelope>("op")
                 .collect { envelope ->
                     val op = CollabOpSerializer.decode(envelope.payload) ?: return@collect
                     engine.observe(op.lamport)
@@ -76,11 +76,15 @@ class SupabaseCollabClient @Inject constructor(
                 }
         }
 
-        // Durable fallback: watch inserts into collab_ops for this project.
+        // Durable fallback: watch inserts into collab_ops (supabase-kt's
+        // PostgresChangeFilter has no server-side equality filter helper here,
+        // so rows are filtered client-side by project_id).
         scope.launch {
-            channel.postgresChangeFlow<PostgresAction.Insert>(schema = "public", table = "collab_ops") {
-                filter = "project_id=eq.${projectId.value}"
+            channel.postgresChangeFlow<PostgresAction.Insert>(schema = "public") {
+                table = "collab_ops"
             }.collect { change ->
+                val rowProjectId = change.record["project_id"]?.jsonPrimitive?.content
+                if (rowProjectId != projectId.value) return@collect
                 val payload = change.record["op_json"]?.jsonPrimitive?.content ?: return@collect
                 val op = CollabOpSerializer.decode(payload) ?: return@collect
                 engine.observe(op.lamport)
@@ -97,7 +101,7 @@ class SupabaseCollabClient @Inject constructor(
             lastSeenAt = Clock.System.now(),
         )
 
-        channel.join()
+        channel.subscribe(blockUntilSubscribed = true)
         state.value = CollabConnectionState.CONNECTED
         return me
     }
@@ -121,7 +125,7 @@ class SupabaseCollabClient @Inject constructor(
     }
 
     suspend fun leave(projectId: ProjectId) {
-        channels.remove(projectId.value)?.remove()
+        channels.remove(projectId.value)?.unsubscribe()
         connectionStates[projectId.value]?.value = CollabConnectionState.DISCONNECTED
     }
 
