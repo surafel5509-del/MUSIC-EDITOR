@@ -103,7 +103,7 @@ class MixerViewModel @Inject constructor(
 
     fun setEffectParameter(trackId: TrackId, insertIndex: Int, paramIndex: Int, value: Float) {
         engineController.setEffectParameter(
-            nodeId = 0, // resolved inside the controller by domain id mapping
+            domainTrackId = trackId.value,
             insertIndex = insertIndex,
             paramIndex = paramIndex,
             value = value,

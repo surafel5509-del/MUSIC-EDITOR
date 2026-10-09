@@ -16,7 +16,7 @@ class PreviewPlayer @Inject constructor(
 
     fun play(path: String) {
         player.stop()
-        player.setMediaItem(MediaItem.fromPath(path))
+        player.setMediaItem(MediaItem.fromUri(path))
         player.prepare()
         player.play()
     }

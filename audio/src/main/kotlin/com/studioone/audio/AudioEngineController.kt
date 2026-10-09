@@ -95,6 +95,16 @@ class AudioEngineController @Inject constructor() {
         }
     }
 
+    /** Live parameter tweak for one insert slot (mixer knob drags). */
+    fun setEffectParameter(domainTrackId: String, insertIndex: Int, paramIndex: Int, value: Float) {
+        scope.launch {
+            graphMutex.withLock {
+                val nativeId = nativeTrackIds[domainTrackId] ?: return@withLock
+                engine.setEffectParameter(nativeId, insertIndex, paramIndex, value)
+            }
+        }
+    }
+
     fun noteOn(domainTrackId: String, pitch: Int, velocity: Int) {
         nativeTrackIds[domainTrackId]?.let { engine.noteOn(it, pitch, velocity) }
     }
