@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Piano
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Sliders
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -58,7 +58,7 @@ private data class WorkspaceTab(val route: String, val labelRes: Int, val icon: 
 
 private val workspaceTabs = listOf(
     WorkspaceTab(Routes.TAB_ARRANGE, R.string.nav_arrange, Icons.AutoMirrored.Filled.FeaturedPlayList),
-    WorkspaceTab(Routes.TAB_MIXER, R.string.nav_mixer, Icons.Filled.Sliders),
+    WorkspaceTab(Routes.TAB_MIXER, R.string.nav_mixer, Icons.Filled.Tune),
     WorkspaceTab(Routes.TAB_INSTRUMENTS, R.string.nav_instruments, Icons.Filled.Piano),
     WorkspaceTab(Routes.TAB_LIBRARY, R.string.nav_library, Icons.Filled.LibraryMusic),
 )

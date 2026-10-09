@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val uiSettings by settingsRepository.observeUiSettings()
                 .collectAsStateWithLifecycle(
-                    initial = com.studioone.core.domain.repository.UiSettings(),
+                    initialValue = com.studioone.core.domain.repository.UiSettings(),
                 )
 
             val darkTheme = when (uiSettings.themeMode) {
