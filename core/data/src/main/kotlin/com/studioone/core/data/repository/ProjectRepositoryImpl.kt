@@ -18,6 +18,7 @@ import com.studioone.core.domain.model.Project
 import com.studioone.core.domain.model.ProjectId
 import com.studioone.core.domain.model.ProjectTemplate
 import com.studioone.core.domain.model.ProjectStatus
+import com.studioone.core.domain.model.TimeSignature
 import com.studioone.core.domain.model.Track
 import com.studioone.core.domain.model.TrackId
 import com.studioone.core.domain.model.TrackSpec
@@ -67,7 +68,7 @@ class ProjectRepositoryImpl @Inject constructor(
             name = name,
             templateId = template?.id,
             tempo = tempo ?: template?.tempo ?: 120.0,
-            timeSignature = template?.timeSignature ?: Project().timeSignature,
+            timeSignature = template?.timeSignature ?: TimeSignature(4, 4),
             key = template?.key,
             createdAt = now,
             updatedAt = now,

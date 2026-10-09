@@ -37,15 +37,20 @@ class LibraryRepositoryImpl @Inject constructor(
 
     override fun observeItems(filter: LibraryFilter): Flow<List<LoopItem>> =
         libraryDao.observeAll().map { rows ->
+            // Local captures: public API properties from other modules cannot
+            // be smart-cast across the null checks below.
+            val bpmRange = filter.bpmRange
+            val key = filter.key
+            val packId = filter.packId
             rows.map { it.toDomain() }
                 .filter { item ->
                     (filter.query.isBlank() || item.name.contains(filter.query, true) ||
                         item.tags.any { it.contains(filter.query, true) }) &&
                         (filter.kinds.isEmpty() || item.kind in filter.kinds) &&
                         (!filter.favoritesOnly || item.favorite) &&
-                        (filter.packId == null || item.packId == filter.packId) &&
-                        (filter.bpmRange == null || item.bpm == null || item.bpm in filter.bpmRange) &&
-                        (filter.key == null || item.key == null || item.key == filter.key)
+                        (packId == null || item.packId == packId) &&
+                        (bpmRange == null || item.bpm == null || item.bpm in bpmRange) &&
+                        (key == null || item.key == null || item.key == key)
                 }
         }
 

@@ -177,4 +177,9 @@ class WaveformRepositoryImpl @Inject constructor(
         forEach { buffer.putFloat(it) }
         return buffer.array()
     }
+
+    private fun ByteArray.toFloatArray(): FloatArray {
+        val buffer = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIAN)
+        return FloatArray(size / 4) { buffer.getFloat() }
+    }
 }
