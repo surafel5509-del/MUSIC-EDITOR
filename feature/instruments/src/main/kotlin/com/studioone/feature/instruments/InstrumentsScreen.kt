@@ -87,7 +87,7 @@ fun PadGrid(onPad: (Int) -> Unit, modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        itemsIndexed(DrumPadNotes) { index, _ ->
+        itemsIndexed(DrumPadNotes.asList()) { index, _ ->
             Surface(
                 modifier = Modifier.aspectRatio(1f),
                 shape = RoundedCornerShape(14.dp),
