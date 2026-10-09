@@ -1,5 +1,7 @@
 # StudioOne Mobile
 
+[![CI](https://github.com/surafel5509-del/MUSIC-EDITOR/actions/workflows/ci.yml/badge.svg)](https://github.com/surafel5509-del/MUSIC-EDITOR/actions/workflows/ci.yml)
+
 A production-grade Android music production app (mobile DAW) for musicians,
 producers and podcasters: multitrack recording, MIDI editing, virtual
 instruments, effects, mixing/mastering, a content library and realtime cloud
@@ -24,6 +26,20 @@ collaboration.
 | Library | Loops/one-shots/presets, search/filter, preview (Media3), SAF import, BPM + key detection |
 | Collaboration | Supabase Realtime channels, CRDT op merge (LWW + add-wins OR-set), presence, invite links, offline outbox sync |
 | Accessibility | TalkBack labels, high contrast, color-blind-safe palette swap, large touch targets, RTL-ready layouts |
+
+## Getting the APK (GitHub Actions)
+
+Every push to `main` and every pull request builds a debug APK in CI — no
+local Android SDK required:
+
+1. Open the **Actions** tab → pick the latest **CI** run.
+2. Download the **`studioone-debug-apk`** artifact → unzip →
+   `studioone-<sha>-debug.apk` → install on any device with Android 8.0+.
+
+The CI jobs (`unit-tests`, `lint`, `build-apk`, `native-tests`) use the same
+Gradle 8.11.1 / AGP 8.7.3 / NDK 27.1.12297006 toolchain as local builds.
+Release AABs for the Play Store are produced by the **Release** workflow when a
+`v*` tag is pushed (see `docs/` → deploy for the required GitHub secrets).
 
 ## Repository layout
 

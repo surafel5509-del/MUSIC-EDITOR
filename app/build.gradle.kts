@@ -1,8 +1,20 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("studioone.android.application")
     id("studioone.android.compose")
     id("studioone.android.hilt")
     id("org.jetbrains.kotlin.plugin.serialization")
+}
+
+// Release signing: CI (or a local machine) drops a keystore.properties next
+// to settings.gradle.kts. Without it, release builds fall back to the debug
+// key so CI can still produce installable artifacts.
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -16,12 +28,29 @@ android {
         vectorDrawables { useSupportLibrary = true }
     }
 
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".dev"
         }
         release {
-            // Proguard rules ship in proguard-rules.pro (native + keep rules).
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+            // isMinifyEnabled / isShrinkResources / proguard files come from
+            // the studioone.android.application convention plugin.
         }
     }
 

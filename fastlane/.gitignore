@@ -1,0 +1,5 @@
+report.xml
+Preview.html
+test_output
+screenshots/**/*.png
+play-service-account.json

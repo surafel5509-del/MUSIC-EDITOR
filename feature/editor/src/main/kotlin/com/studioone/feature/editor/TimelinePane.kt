@@ -120,7 +120,7 @@ fun TimelinePane(
 
                 // Playhead line.
                 val playheadX = (state.playheadFrame * pxPerFrame).toFloat()
-                Canvas(Modifier.fillMaxSize()) {
+                Canvas(Modifier.matchParentSize()) {
                     drawLine(
                         color = Color(0xFFFF5C5C),
                         start = Offset(playheadX, 0f),

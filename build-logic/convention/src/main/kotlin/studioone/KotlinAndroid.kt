@@ -43,6 +43,9 @@ internal fun Project.configureKotlinAndroid(
             warningsAsErrors = false
             abortOnError = true
             checkDependencies = true
+            // RECORD_AUDIO/BLUETOOTH_* are declared once in the app manifest;
+            // per-module checks would flag merged permissions as missing.
+            disable += setOf("MissingPermission", "GradleDependency")
         }
     }
 

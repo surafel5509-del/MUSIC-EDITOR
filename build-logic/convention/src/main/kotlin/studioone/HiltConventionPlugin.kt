@@ -14,7 +14,7 @@ class HiltConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.google.devtools.ksp")
-                apply("dagger.hilt.android.plugin")
+                apply("com.google.dagger.hilt.android")
             }
             dependencies {
                 "implementation"(libs.findLibrary("hilt-android").get())

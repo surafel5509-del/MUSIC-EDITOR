@@ -3,6 +3,7 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <cstdio>
 #include <cstring>
 #include <sys/stat.h>
 

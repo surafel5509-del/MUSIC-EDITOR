@@ -3,9 +3,16 @@ name: Release
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      track:
+        description: "Play Store track"
+        required: false
+        default: "internal"
 
 jobs:
-  play-internal:
+  play-release:
+    name: Build & publish to Play Store
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -15,47 +22,59 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: 17
+          java-version: "17"
 
-      - name: Set up NDK
+      - name: Set up Android NDK
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r27
+          ndk-version: "27.1.12297006"
           link-to-sdk: true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: 8.11.1
+          gradle-version: "8.11.1"
 
       - name: Set up Ruby (fastlane)
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
-          bundler-cache: false
+          ruby-version: "3.3"
 
       - name: Install fastlane
-        run: gem install fastlane
+        run: gem install fastlane --no-document
 
-      - name: Decode keystore
+      - name: Decode release keystore
+        env:
+          RELEASE_KEYSTORE_B64: ${{ secrets.RELEASE_KEYSTORE_B64 }}
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
         run: |
-          echo "${{ secrets.RELEASE_KEYSTORE_B64 }}" | base64 -d > release.keystore
-          cat > keystore.properties <<PROPS
-          storeFile=$GITHUB_WORKSPACE/release.keystore
-          storePassword=${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
-          keyAlias=${{ secrets.RELEASE_KEY_ALIAS }}
-          keyPassword=${{ secrets.RELEASE_KEY_PASSWORD }}
-          PROPS
+          echo "$RELEASE_KEYSTORE_B64" | base64 -d > release.keystore
+          {
+            echo "storeFile=$GITHUB_WORKSPACE/release.keystore"
+            echo "storePassword=$RELEASE_KEYSTORE_PASSWORD"
+            echo "keyAlias=$RELEASE_KEY_ALIAS"
+            echo "keyPassword=$RELEASE_KEY_PASSWORD"
+          } > keystore.properties
 
-      - name: Build & publish to Play Internal
+      - name: Decode Play Store service account
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          echo "$PLAY_SERVICE_ACCOUNT_JSON" > fastlane/play-service-account.json
+
+      - name: Build & upload to Play Store
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-        run: fastlane internal
+          GRADLE_PATH: gradle
+        run: fastlane android internal
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
           name: studioone-release-aab
           path: app/build/outputs/bundle/release/*.aab
+          retention-days: 30
+          if-no-files-found: error

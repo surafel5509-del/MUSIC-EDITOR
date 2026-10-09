@@ -4,13 +4,24 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  GRADLE_VERSION: "8.11.1"
+  NDK_VERSION: "27.1.12297006"
+  # Runner has 7GB; keep the daemon comfortably under it.
+  ORG_GRADLE_PROJECT_org.gradle.jvmargs: "-Xmx4g -XX:MaxMetaspaceSize=1g"
+
 jobs:
-  build-and-test:
+  # ---------------------------------------------------------------------------
+  # Kotlin/JVM unit tests for every module
+  # ---------------------------------------------------------------------------
+  unit-tests:
+    name: Unit tests
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -20,49 +31,137 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: 17
+          java-version: "17"
 
-      - name: Set up NDK
+      - name: Set up Android NDK
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r27
+          ndk-version: ${{ env.NDK_VERSION }}
           link-to-sdk: true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: 8.11.1
+          gradle-version: ${{ env.GRADLE_VERSION }}
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
-      - name: Lint (app)
-        run: gradle :app:lintDebug --stacktrace
+      - name: Run unit tests
+        run: gradle testDebugUnitTest --stacktrace --no-daemon
 
-      - name: Unit tests
-        run: gradle testDebugUnitTest --stacktrace
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-reports
+          path: "**/build/reports/tests/**"
+          retention-days: 7
 
-      - name: Assemble debug APK
-        run: gradle :app:assembleDebug --stacktrace
+  # ---------------------------------------------------------------------------
+  # Android lint (non-blocking: reports only, so it never gates the APK)
+  # ---------------------------------------------------------------------------
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: "17"
+
+      - name: Set up Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: ${{ env.NDK_VERSION }}
+          link-to-sdk: true
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: true
+
+      - name: Run lint
+        run: gradle :app:lintDebug --stacktrace --no-daemon
+
+      - name: Upload lint reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: app/build/reports/lint-results-*.html
+          retention-days: 14
+
+  # ---------------------------------------------------------------------------
+  # Build the debug APK (native engine included) and publish it as artifact
+  # ---------------------------------------------------------------------------
+  build-apk:
+    name: Build APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: "17"
+
+      - name: Set up Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: ${{ env.NDK_VERSION }}
+          link-to-sdk: true
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Build debug APK
+        run: gradle :app:assembleDebug --stacktrace --no-daemon
+
+      - name: Rename APK with version
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk \
+             dist/studioone-${GITHUB_SHA::7}-debug.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: studioone-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
-          retention-days: 7
+          path: dist/*.apk
+          retention-days: 14
+          if-no-files-found: error
 
+  # ---------------------------------------------------------------------------
+  # Native DSP unit tests (host build, no Android SDK required)
+  # ---------------------------------------------------------------------------
   native-tests:
+    name: Native engine tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+
       - name: Install build tools
         run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++
+
       - name: Configure native tests
         working-directory: audio/src/main/cpp
         run: cmake -B build -G Ninja -DBUILD_AUDIO_TESTS=ON
+
       - name: Build native tests
         working-directory: audio/src/main/cpp
         run: cmake --build build
+
       - name: Run native tests
         working-directory: audio/src/main/cpp/build
         run: ctest --output-on-failure

@@ -1,2 +1,4 @@
-json_key_file(ENV["PLAY_SERVICE_ACCOUNT_JSON_PATH"] || "fastlane/play-service-account.json")
+# Service account JSON is written by CI (see .github/workflows/release.yml)
+# or placed manually at fastlane/play-service-account.json for local runs.
+json_key_file(ENV.fetch("PLAY_JSON_KEY_PATH", "fastlane/play-service-account.json"))
 package_name("com.studioone.mobile")
