@@ -1,0 +1,153 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GRADLE_VERSION: "8.11.1"
+  # Runner has 7GB; keep the Gradle + Kotlin daemons comfortably under it.
+  ORG_GRADLE_PROJECT_org.gradle.jvmargs: "-Xmx4g -XX:MaxMetaspaceSize=1g"
+  ORG_GRADLE_PROJECT_kotlin.daemon.jvmargs: "-Xmx2g"
+  # The ubuntu-latest image preinstalls NDK 27.3.13750724 (default) and
+  # SDK cmake;3.31.5 — both match the pins in gradle/libs.versions.toml
+  # and audio/build.gradle.kts, so no extra install steps are needed.
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Kotlin/JVM unit tests for every module
+  # ---------------------------------------------------------------------------
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Run unit tests
+        run: gradle testDebugUnitTest --stacktrace --no-daemon
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-reports
+          path: "**/build/reports/tests/**"
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # Android lint (non-blocking: reports only, so it never gates the APK)
+  # ---------------------------------------------------------------------------
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: true
+
+      - name: Run lint
+        run: gradle :app:lintDebug --stacktrace --no-daemon --no-configuration-cache
+
+      - name: Upload lint reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: app/build/reports/lint-results-*.html
+          retention-days: 14
+
+  # ---------------------------------------------------------------------------
+  # Build the debug APK (native engine included) and publish it as artifact
+  # ---------------------------------------------------------------------------
+  build-apk:
+    name: Build APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Build debug APK
+        run: gradle :app:assembleDebug --stacktrace --no-daemon
+
+      - name: Rename APK with version
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk \
+             dist/studioone-${GITHUB_SHA::7}-debug.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: studioone-debug-apk
+          path: dist/*.apk
+          retention-days: 14
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------------------
+  # Native DSP unit tests (host build, no Android SDK required)
+  # ---------------------------------------------------------------------------
+  native-tests:
+    name: Native engine tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++
+
+      - name: Configure native tests
+        working-directory: audio/src/main/cpp
+        run: cmake -B build -G Ninja -DBUILD_AUDIO_TESTS=ON
+
+      - name: Build native tests
+        working-directory: audio/src/main/cpp
+        # audio_tests does not link Oboe; building only this target skips the
+        # Oboe sources, which carry clang-only flags and are Android-only.
+        run: cmake --build build --target audio_tests
+
+      - name: Run native tests
+        run: ctest --test-dir audio/src/main/cpp/build --output-on-failure

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="collab_title">Collaboration</string>
+    <string name="collab_join">Join session</string>
+    <string name="collab_invite">Copy invite link</string>
+    <string name="collab_participants">Participants</string>
+    <string name="collab_activity">Activity</string>
+    <string name="collab_connected">Connected</string>
+    <string name="collab_connecting">Connecting…</string>
+    <string name="collab_disconnected">Offline — changes sync when you reconnect</string>
+    <string name="collab_send">Send</string>
+    <string name="collab_chat_hint">Message collaborators…</string>
+</resources>

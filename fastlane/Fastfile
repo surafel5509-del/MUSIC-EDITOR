@@ -1,0 +1,60 @@
+# StudioOne Mobile release lanes.
+#
+# GRADLE_PATH lets CI use the Gradle installed by gradle/actions/setup-gradle
+# instead of the wrapper (default "./gradlew" for local machines).
+
+default_platform(:android)
+
+GRADLE_BIN = ENV["GRADLE_PATH"] || "./gradlew"
+
+platform :android do
+  desc "Run unit tests"
+  lane :test do
+    gradle(task: "testDebugUnitTest", gradle_path: GRADLE_BIN)
+  end
+
+  desc "Build debug APK"
+  lane :debug do
+    gradle(task: "assembleDebug", gradle_path: GRADLE_BIN)
+  end
+
+  desc "Build signed release AAB (reads keystore.properties)"
+  lane :bundle do
+    gradle(
+      task: "bundleRelease",
+      gradle_path: GRADLE_BIN,
+      properties: {
+        "studioone.supabase.url" => ENV["SUPABASE_URL"].to_s,
+        "studioone.supabase.anonKey" => ENV["SUPABASE_ANON_KEY"].to_s,
+      },
+    )
+  end
+
+  desc "Ship to Play Store internal track (draft)"
+  lane :internal do
+    bundle
+    upload_to_play_store(
+      track: ENV.fetch("PLAY_TRACK", "internal"),
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      release_status: "draft",
+      skip_upload_changelogs: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+
+  desc "Promote internal -> production (10% staged rollout)"
+  lane :promote do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "production",
+      rollout: "0.1",
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+end

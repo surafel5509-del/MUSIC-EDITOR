@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mixer_title">Mixer</string>
+    <string name="mixer_master">Master</string>
+    <string name="mixer_inserts">Inserts</string>
+    <string name="mixer_sends">Sends</string>
+    <string name="mixer_add_effect">Add effect</string>
+    <string name="mixer_lufs_integrated">LUFS-I</string>
+    <string name="mixer_lufs_momentary">LUFS-M</string>
+    <string name="mixer_pan">Pan</string>
+    <string name="mixer_mute">Mute</string>
+    <string name="mixer_solo">Solo</string>
+    <string name="mixer_db_format">%.1f dB</string>
+</resources>

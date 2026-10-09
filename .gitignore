@@ -1,0 +1,49 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+local.properties
+
+# Android / IntelliJ
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+release/
+.navigation/
+captures
+*.hprof
+
+# Keystore / secrets
+*.jks
+*.keystore
+keystore.properties
+secrets.properties
+google-services.json
+supabase-local.json
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+fastlane/README.md
+
+# Python / sample pack generation output
+samples/generated/
+__pycache__/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Room schema exports are committed on purpose (migration history)

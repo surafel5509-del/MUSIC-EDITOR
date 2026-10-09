@@ -1,0 +1,79 @@
+[
+  {
+    "id": "blank",
+    "name": "Blank",
+    "description": "Empty session — bring your own tracks",
+    "category": "BLANK",
+    "tempo": 120,
+    "tracks": []
+  },
+  {
+    "id": "beat",
+    "name": "Beat",
+    "description": "Drums, bass, keys and a lead — ready for a hip-hop or trap sketch",
+    "category": "BEAT",
+    "tempo": 140,
+    "keyRoot": 0,
+    "keyScale": "MINOR_PENTATONIC",
+    "tracks": [
+      { "name": "Drums", "type": "MIDI", "colorIndex": 0, "instrumentId": "drums" },
+      { "name": "808 Bass", "type": "MIDI", "colorIndex": 1, "instrumentId": "synth-subtractive" },
+      { "name": "Keys", "type": "MIDI", "colorIndex": 2, "instrumentId": "synth-subtractive" },
+      { "name": "Lead", "type": "MIDI", "colorIndex": 3, "instrumentId": "synth-subtractive" }
+    ]
+  },
+  {
+    "id": "song",
+    "name": "Song",
+    "description": "Verse/chorus songwriting: drums, bass, chords, lead vocal",
+    "category": "SONG",
+    "tempo": 100,
+    "keyRoot": 9,
+    "keyScale": "MINOR_NATURAL",
+    "tracks": [
+      { "name": "Drums", "type": "MIDI", "colorIndex": 0, "instrumentId": "drums" },
+      { "name": "Bass", "type": "MIDI", "colorIndex": 1, "instrumentId": "synth-subtractive" },
+      { "name": "Chords", "type": "MIDI", "colorIndex": 2, "instrumentId": "synth-subtractive" },
+      { "name": "Lead Vocal", "type": "AUDIO", "colorIndex": 4, "armed": true, "effectChainIds": ["vocal-chain"] }
+    ]
+  },
+  {
+    "id": "podcast",
+    "name": "Podcast",
+    "description": "Two hosts, a guest input and a music bed with ducking",
+    "category": "PODCAST",
+    "tempo": 120,
+    "tracks": [
+      { "name": "Host 1", "type": "AUDIO", "colorIndex": 0, "armed": true, "effectChainIds": ["podcast-chain"] },
+      { "name": "Host 2", "type": "AUDIO", "colorIndex": 1, "effectChainIds": ["podcast-chain"] },
+      { "name": "Guest", "type": "AUDIO", "colorIndex": 2 },
+      { "name": "Music Bed", "type": "AUDIO", "colorIndex": 3 }
+    ]
+  },
+  {
+    "id": "live-recording",
+    "name": "Live Recording",
+    "description": "Four armed inputs for a band rehearsal or gig capture",
+    "category": "LIVE_RECORDING",
+    "tempo": 120,
+    "tracks": [
+      { "name": "Input 1", "type": "AUDIO", "colorIndex": 0, "armed": true },
+      { "name": "Input 2", "type": "AUDIO", "colorIndex": 1, "armed": true },
+      { "name": "Input 3", "type": "AUDIO", "colorIndex": 2, "armed": true },
+      { "name": "Input 4", "type": "AUDIO", "colorIndex": 3, "armed": true }
+    ]
+  },
+  {
+    "id": "remix",
+    "name": "Remix",
+    "description": "Reference stem lanes plus drums and bass for a flip",
+    "category": "REMIX",
+    "tempo": 128,
+    "tracks": [
+      { "name": "Reference", "type": "AUDIO", "colorIndex": 7 },
+      { "name": "Vocals", "type": "AUDIO", "colorIndex": 4 },
+      { "name": "Drums", "type": "MIDI", "colorIndex": 0, "instrumentId": "drums" },
+      { "name": "Bass", "type": "MIDI", "colorIndex": 1, "instrumentId": "synth-subtractive" }
+    ]
+  }
+]

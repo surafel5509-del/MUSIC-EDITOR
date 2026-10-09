@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="effects_presets">Presets</string>
+    <string name="effects_save_preset">Save preset</string>
+    <string name="effects_share_preset">Share preset</string>
+</resources>

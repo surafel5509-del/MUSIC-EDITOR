@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">Projects</string>
+    <string name="home_search">Search projects</string>
+    <string name="home_new_project">New project</string>
+    <string name="home_empty_title">No projects yet</string>
+    <string name="home_empty_subtitle">Tap “New project” to start from a template or a blank session.</string>
+    <string name="home_open">Open</string>
+    <string name="home_duplicate">Duplicate</string>
+    <string name="home_delete">Delete</string>
+    <string name="home_archive">Archive</string>
+    <string name="home_rename">Rename</string>
+    <string name="home_share">Share</string>
+    <string name="home_delete_confirm_title">Delete project?</string>
+    <string name="home_delete_confirm_message">“%1$s” will be permanently removed from this device and the cloud.</string>
+    <string name="home_cancel">Cancel</string>
+    <string name="home_project_name_label">Project name</string>
+    <string name="home_create">Create</string>
+    <string name="home_tempo">Tempo</string>
+    <string name="home_time_signature">Time signature</string>
+    <string name="home_key">Key</string>
+    <string name="home_templates_title">Start from a template</string>
+    <string name="home_archived_filter">Show archived</string>
+    <string name="home_updated">Updated %1$s</string>
+</resources>

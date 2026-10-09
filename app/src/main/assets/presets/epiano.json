@@ -1,0 +1,20 @@
+{
+  "id": "preset-epiano",
+  "name": "Warm EP",
+  "targetId": "synth-subtractive",
+  "category": "Keys",
+  "author": "StudioOne",
+  "params": {
+    "osc1_shape": 3,
+    "osc2_shape": 0,
+    "osc2_detune": 0.08,
+    "osc_mix": 0.4,
+    "filter_cutoff": 3200.0,
+    "filter_q": 0.8,
+    "filter_env_amount": 0.35,
+    "amp_attack_ms": 2.0,
+    "amp_decay_ms": 900.0,
+    "amp_sustain": 0.4,
+    "amp_release_ms": 250.0
+  }
+}

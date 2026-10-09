@@ -1,0 +1,20 @@
+{
+  "id": "preset-synth-bass",
+  "name": "Deep Sub Bass",
+  "targetId": "synth-subtractive",
+  "category": "Bass",
+  "author": "StudioOne",
+  "params": {
+    "osc1_shape": 1,
+    "osc2_shape": 0,
+    "osc2_detune": 0.0,
+    "osc_mix": 0.15,
+    "filter_cutoff": 420.0,
+    "filter_q": 1.4,
+    "filter_env_amount": 0.55,
+    "amp_attack_ms": 3.0,
+    "amp_decay_ms": 300.0,
+    "amp_sustain": 0.85,
+    "amp_release_ms": 90.0
+  }
+}

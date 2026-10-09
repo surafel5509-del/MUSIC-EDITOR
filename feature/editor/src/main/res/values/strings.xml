@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_play">Play</string>
+    <string name="editor_stop">Stop</string>
+    <string name="editor_record">Record</string>
+    <string name="editor_loop">Loop</string>
+    <string name="editor_metronome">Metronome</string>
+    <string name="editor_undo">Undo</string>
+    <string name="editor_redo">Redo</string>
+    <string name="editor_add_track">Add track</string>
+    <string name="editor_add_audio_track">Audio track</string>
+    <string name="editor_add_midi_track">Instrument track</string>
+    <string name="editor_snap">Snap</string>
+    <string name="editor_zoom_in">Zoom in</string>
+    <string name="editor_zoom_out">Zoom out</string>
+    <string name="editor_position">Position</string>
+    <string name="editor_bar_beat">Bar.Beat</string>
+    <string name="editor_split">Split</string>
+    <string name="editor_delete">Delete</string>
+    <string name="editor_reverse">Reverse</string>
+    <string name="editor_fade_in">Fade in</string>
+    <string name="editor_fade_out">Fade out</string>
+    <string name="editor_track_audio">Audio %1$d</string>
+    <string name="editor_track_instrument">Instrument %1$d</string>
+    <string name="editor_cd_arm">Arm track for recording</string>
+    <string name="editor_cd_mute">Mute track</string>
+    <string name="editor_cd_solo">Solo track</string>
+    <string name="editor_load_error">Couldn\'t open this project. Go back and try again.</string>
+</resources>
