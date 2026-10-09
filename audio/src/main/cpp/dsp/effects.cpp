@@ -19,6 +19,8 @@ public:
     void process(float* const* channels, int numChannels, int numFrames) noexcept override {
         dsp_.process(channels, numChannels, numFrames);
     }
+    // Zero by default; specialized below for latency-reporting effects.
+    int32_t latencyFrames() const noexcept override { return 0; }
     T dsp_;
 };
 

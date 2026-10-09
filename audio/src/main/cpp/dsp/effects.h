@@ -6,6 +6,7 @@
 // from the audio thread use smoothed one-pole targets to avoid zipper noise.
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstring>
@@ -189,7 +190,10 @@ class Limiter {
 public:
     void prepare(double sampleRate) {
         sampleRate_ = sampleRate;
-        lookahead_.prepare(1024);
+        // Size the lookahead delay lines from the configured lookahead.
+        const size_t cap = static_cast<size_t>(lookaheadMs_ / 1000.0 * sampleRate_) + 16;
+        delayed_[0].prepare(cap);
+        delayed_[1].prepare(cap);
         release_.prepare(sampleRate); release_.snap(0.1f);
         ceiling_.prepare(sampleRate); ceiling_.snap(-1.f);
     }

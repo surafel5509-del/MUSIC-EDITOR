@@ -2,6 +2,7 @@
 // Time-based, modulation and saturation effects.
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <array>
 #include "effects.h"

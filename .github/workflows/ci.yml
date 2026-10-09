@@ -12,9 +12,12 @@ concurrency:
 
 env:
   GRADLE_VERSION: "8.11.1"
-  NDK_VERSION: "27.1.12297006"
-  # Runner has 7GB; keep the daemon comfortably under it.
+  # Runner has 7GB; keep the Gradle + Kotlin daemons comfortably under it.
   ORG_GRADLE_PROJECT_org.gradle.jvmargs: "-Xmx4g -XX:MaxMetaspaceSize=1g"
+  ORG_GRADLE_PROJECT_kotlin.daemon.jvmargs: "-Xmx2g"
+  # The ubuntu-latest image preinstalls NDK 27.3.13750724 (default) and
+  # SDK cmake;3.31.5 — both match the pins in gradle/libs.versions.toml
+  # and audio/build.gradle.kts, so no extra install steps are needed.
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -25,19 +28,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: "17"
-
-      - name: Set up Android NDK
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: ${{ env.NDK_VERSION }}
-          link-to-sdk: true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -65,19 +62,13 @@ jobs:
     timeout-minutes: 45
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: "17"
-
-      - name: Set up Android NDK
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: ${{ env.NDK_VERSION }}
-          link-to-sdk: true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -86,7 +77,7 @@ jobs:
           cache-read-only: true
 
       - name: Run lint
-        run: gradle :app:lintDebug --stacktrace --no-daemon
+        run: gradle :app:lintDebug --stacktrace --no-daemon --no-configuration-cache
 
       - name: Upload lint reports
         if: always()
@@ -104,19 +95,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: "17"
-
-      - name: Set up Android NDK
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: ${{ env.NDK_VERSION }}
-          link-to-sdk: true
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -149,7 +134,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install build tools
         run: sudo apt-get update && sudo apt-get install -y cmake ninja-build g++
@@ -160,8 +145,9 @@ jobs:
 
       - name: Build native tests
         working-directory: audio/src/main/cpp
-        run: cmake --build build
+        # audio_tests does not link Oboe; building only this target skips the
+        # Oboe sources, which carry clang-only flags and are Android-only.
+        run: cmake --build build --target audio_tests
 
       - name: Run native tests
-        working-directory: audio/src/main/cpp/build
-        run: ctest --output-on-failure
+        run: ctest --test-dir audio/src/main/cpp/build --output-on-failure

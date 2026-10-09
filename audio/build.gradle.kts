@@ -23,6 +23,8 @@ android {
     externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
+            // Preinstalled on the GitHub runner image (SDK cmake;3.31.5).
+            version = "3.31.5"
         }
     }
 }
