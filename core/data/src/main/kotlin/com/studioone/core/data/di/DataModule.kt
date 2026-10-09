@@ -1,7 +1,6 @@
 package com.studioone.core.data.di
 
 import android.content.Context
-import androidx.room.RoomDatabase
 import com.studioone.core.data.repository.LibraryRepositoryImpl
 import com.studioone.core.data.repository.ProjectRepositoryImpl
 import com.studioone.core.data.repository.TemplateRepositoryImpl

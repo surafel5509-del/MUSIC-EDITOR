@@ -1,5 +1,6 @@
 plugins {
     id("studioone.android.library")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
