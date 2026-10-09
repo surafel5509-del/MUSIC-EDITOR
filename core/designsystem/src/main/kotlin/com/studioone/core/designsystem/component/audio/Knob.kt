@@ -113,7 +113,7 @@ fun Knob(
         }
         // Indicator line.
         val angle = Math.toRadians((startAngle + sweep * normalized).toDouble())
-        val inner = radius * 0.35
+        val inner = radius * 0.35f
         drawLine(
             color = if (enabled) indicatorColor else disabledColor,
             start = Offset(center.x + inner * cos(angle).toFloat(), center.y + inner * sin(angle).toFloat()),
