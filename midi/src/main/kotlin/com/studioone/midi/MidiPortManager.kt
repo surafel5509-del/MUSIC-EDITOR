@@ -4,7 +4,7 @@ import android.content.Context
 import android.media.midi.MidiDevice
 import android.media.midi.MidiDeviceInfo
 import android.media.midi.MidiManager
-import android.media.midi.MidiPort
+import android.media.midi.MidiOutputPort
 import android.media.midi.MidiReceiver
 import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -41,7 +41,7 @@ class MidiPortManager @Inject constructor(
     }
 
     private val events = MutableSharedFlow<MidiEvent>(extraBufferCapacity = 256)
-    private val openPorts = mutableListOf<MidiPort>()
+    private val openPorts = mutableListOf<MidiOutputPort>()
     private val openDevices = mutableListOf<MidiDevice>()
 
     /** Hot list of connected devices (USB + BLE). */
