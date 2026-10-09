@@ -25,4 +25,5 @@
     <string name="editor_cd_arm">Arm track for recording</string>
     <string name="editor_cd_mute">Mute track</string>
     <string name="editor_cd_solo">Solo track</string>
+    <string name="editor_load_error">Couldn\'t open this project. Go back and try again.</string>
 </resources>

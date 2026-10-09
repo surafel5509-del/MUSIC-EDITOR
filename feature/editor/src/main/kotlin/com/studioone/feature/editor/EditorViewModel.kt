@@ -32,6 +32,7 @@ data class EditorUiState(
     val playheadFrame: Long = 0,
     val undoRedo: UndoRedoUiState = UndoRedoUiState(false, false, null, null),
     val engineReady: Boolean = false,
+    val loadError: Boolean = false,
 )
 
 enum class EditorTool { SELECT, DRAW, SPLIT, ERASE, AUTOMATION }
@@ -65,7 +66,14 @@ class EditorViewModel @Inject constructor(
     init {
         sessionHolder.session = session
         viewModelScope.launch {
-            session.open(projectId)
+            // A repository failure here (missing project, corrupt row) must
+            // surface as an error state, never as an uncaught crash.
+            runCatching { session.open(projectId) }
+                .onFailure { t ->
+                    android.util.Log.e("EditorViewModel", "Failed to open project ${projectId.value}", t)
+                    _ui.value = _ui.value.copy(loadError = true)
+                    return@launch
+                }
             // Mirror tracks into the native graph whenever they change.
             session.state.filterNotNull().collect { state ->
                 engineController.syncTracks(state.tracks)

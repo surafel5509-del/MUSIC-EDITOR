@@ -68,7 +68,7 @@ class RecordViewModel @Inject constructor(
         }
     }
 
-    private fun ensureEngine(settings: AudioSettings) {
+    private suspend fun ensureEngine(settings: AudioSettings) {
         engineController.start(
             AudioEngineConfig(
                 sampleRate = settings.sampleRate,
@@ -104,10 +104,12 @@ class RecordViewModel @Inject constructor(
         val dir = File(context.filesDir, "recordings").apply { mkdirs() }
         val file = File(dir, "take-${System.currentTimeMillis()}.wav")
         outputFile = file
-        val started = engineController.startRecording(file.absolutePath, bitDepth = 24)
-        if (started) {
-            engineController.record()
-            _state.value = _state.value.copy(isRecording = true, elapsedFrames = 0)
+        viewModelScope.launch {
+            val started = engineController.startRecording(file.absolutePath, bitDepth = 24)
+            if (started) {
+                engineController.record()
+                _state.value = _state.value.copy(isRecording = true, elapsedFrames = 0)
+            }
         }
     }
 

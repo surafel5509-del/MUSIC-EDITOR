@@ -1,5 +1,6 @@
 package com.studioone.feature.editor
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -90,7 +92,16 @@ fun EditorScreen(
         },
     ) { padding ->
         if (state == null) {
-            com.studioone.core.designsystem.component.StudioLoadingView(Modifier.padding(padding))
+            if (ui.loadError) {
+                Box(
+                    modifier = Modifier.padding(padding).fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(stringResource(R.string.editor_load_error))
+                }
+            } else {
+                com.studioone.core.designsystem.component.StudioLoadingView(Modifier.padding(padding))
+            }
         } else {
             TimelinePane(
                 state = state!!,

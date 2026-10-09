@@ -46,24 +46,45 @@ class AudioEngine {
     }
 
     // ---- Transport ---------------------------------------------------------
+    //
+    // Every call is guarded against a null native handle: the UI layer talks
+    // to the engine before the stream is started (project open, mixer polling)
+    // and those calls must be harmless no-ops, not SIGSEGVs.
 
-    fun setTransportState(state: TransportState) = nativeSetTransportState(handle, state.value)
-    fun seek(frame: Long) = nativeSeek(handle, frame)
-    fun playhead(): Long = nativeGetPlayhead(handle)
-    fun setLoop(enabled: Boolean, startFrame: Long, endFrame: Long) =
-        nativeSetLoop(handle, enabled, startFrame, endFrame)
-    fun setTempo(bpm: Double) = nativeSetTempo(handle, bpm)
-    fun setMetronome(enabled: Boolean) = nativeSetMetronome(handle, enabled)
+    fun setTransportState(state: TransportState) {
+        if (handle != 0L) nativeSetTransportState(handle, state.value)
+    }
+
+    fun seek(frame: Long) {
+        if (handle != 0L) nativeSeek(handle, frame)
+    }
+
+    fun playhead(): Long = if (handle != 0L) nativeGetPlayhead(handle) else 0L
+
+    fun setLoop(enabled: Boolean, startFrame: Long, endFrame: Long) {
+        if (handle != 0L) nativeSetLoop(handle, enabled, startFrame, endFrame)
+    }
+
+    fun setTempo(bpm: Double) {
+        if (handle != 0L) nativeSetTempo(handle, bpm)
+    }
+
+    fun setMetronome(enabled: Boolean) {
+        if (handle != 0L) nativeSetMetronome(handle, enabled)
+    }
 
     // ---- Graph -------------------------------------------------------------
 
     fun addTrack(withInstrument: Boolean, instrumentKind: InstrumentKind): Int =
-        nativeAddTrack(handle, withInstrument, instrumentKind.ordinal)
+        if (handle != 0L) nativeAddTrack(handle, withInstrument, instrumentKind.ordinal) else -1
 
-    fun removeTrack(trackId: Int) = nativeRemoveTrack(handle, trackId)
+    fun removeTrack(trackId: Int) {
+        if (handle != 0L) nativeRemoveTrack(handle, trackId)
+    }
 
-    fun setTrackBasic(trackId: Int, gain: Float, pan: Float, mute: Boolean, solo: Boolean, armed: Boolean) =
-        nativeSetTrackBasic(handle, trackId, gain, pan, mute, solo, armed)
+    fun setTrackBasic(trackId: Int, gain: Float, pan: Float, mute: Boolean, solo: Boolean, armed: Boolean) {
+        if (handle != 0L) nativeSetTrackBasic(handle, trackId, gain, pan, mute, solo, armed)
+    }
 
     /** Loads a WAV file and attaches it as a clip. Returns false on decode failure. */
     fun addAudioClip(
@@ -73,44 +94,58 @@ class AudioEngine {
         sourceOffsetFrames: Long = 0,
         gain: Float = 1f,
         reversed: Boolean = false,
-    ): Boolean = nativeAddAudioClip(handle, trackId, wavPath, clipStartFrame, sourceOffsetFrames, gain, reversed)
+    ): Boolean = if (handle != 0L) {
+        nativeAddAudioClip(handle, trackId, wavPath, clipStartFrame, sourceOffsetFrames, gain, reversed)
+    } else {
+        false
+    }
 
-    fun clearClips(trackId: Int) = nativeClearClips(handle, trackId)
+    fun clearClips(trackId: Int) {
+        if (handle != 0L) nativeClearClips(handle, trackId)
+    }
 
-    fun sendMidi(trackId: Int, status: Int, data1: Int, data2: Int) =
-        nativeSendMidi(handle, trackId, status, data1, data2)
+    fun sendMidi(trackId: Int, status: Int, data1: Int, data2: Int) {
+        if (handle != 0L) nativeSendMidi(handle, trackId, status, data1, data2)
+    }
 
     fun noteOn(trackId: Int, pitch: Int, velocity: Int) = sendMidi(trackId, 0x90, pitch, velocity)
     fun noteOff(trackId: Int, pitch: Int) = sendMidi(trackId, 0x80, pitch, 0)
 
     /** Appends an effect to a node's insert chain. Returns false for unknown types. */
     fun addEffect(nodeId: Int, type: EffectType): Boolean =
-        nativeAddEffect(handle, nodeId, type.ordinal)
+        if (handle != 0L) nativeAddEffect(handle, nodeId, type.ordinal) else false
 
     /**
      * Sets an effect parameter. [insertIndex] selects the slot in the chain;
      * [paramIndex] matches the EffectCatalog parameter order.
      */
-    fun setEffectParameter(nodeId: Int, insertIndex: Int, paramIndex: Int, value: Float) =
-        nativeSetParameter(handle, nodeId, (insertIndex shl 8) or (paramIndex and 0xFF), value)
+    fun setEffectParameter(nodeId: Int, insertIndex: Int, paramIndex: Int, value: Float) {
+        if (handle != 0L) {
+            nativeSetParameter(handle, nodeId, (insertIndex shl 8) or (paramIndex and 0xFF), value)
+        }
+    }
 
     // ---- Recording -----------------------------------------------------------
 
-    fun startRecording(path: String, bitDepth: Int): Boolean = nativeStartRecording(handle, path, bitDepth)
-    fun stopRecording() = nativeStopRecording(handle)
+    fun startRecording(path: String, bitDepth: Int): Boolean =
+        if (handle != 0L) nativeStartRecording(handle, path, bitDepth) else false
+
+    fun stopRecording() {
+        if (handle != 0L) nativeStopRecording(handle)
+    }
 
     // ---- Meters --------------------------------------------------------------
 
     /** Returns [peakL, peakR, rmsL, rmsR, lufsMomentary, lufsIntegrated, clipL, clipR]. */
     fun readMasterMeter(): FloatArray {
         val out = FloatArray(8)
-        nativeReadMasterMeter(handle, out)
+        if (handle != 0L) nativeReadMasterMeter(handle, out)
         return out
     }
 
     fun readTrackMeter(trackId: Int): FloatArray {
         val out = FloatArray(8)
-        nativeReadTrackMeter(handle, trackId, out)
+        if (handle != 0L) nativeReadTrackMeter(handle, trackId, out)
         return out
     }
 

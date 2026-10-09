@@ -45,8 +45,8 @@ class SettingsViewModel @Inject constructor(
 
     /** Runs the latency probe and stores the measurement. */
     fun probeLatency() {
-        val ms = engineController.outputLatencyMs()
         viewModelScope.launch {
+            val ms = engineController.outputLatencyMs()
             settingsRepository.updateAudioSettings {
                 it.copy(measuredOutputLatencyFrames = (ms * it.sampleRate / 1000.0).toInt())
             }
