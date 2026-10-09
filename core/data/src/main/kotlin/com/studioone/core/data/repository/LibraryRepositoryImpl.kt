@@ -44,13 +44,15 @@ class LibraryRepositoryImpl @Inject constructor(
             val packId = filter.packId
             rows.map { it.toDomain() }
                 .filter { item ->
+                    val itemBpm = item.bpm
+                    val itemKey = item.key
                     (filter.query.isBlank() || item.name.contains(filter.query, true) ||
                         item.tags.any { it.contains(filter.query, true) }) &&
                         (filter.kinds.isEmpty() || item.kind in filter.kinds) &&
                         (!filter.favoritesOnly || item.favorite) &&
                         (packId == null || item.packId == packId) &&
-                        (bpmRange == null || item.bpm == null || item.bpm in bpmRange) &&
-                        (key == null || item.key == null || item.key == key)
+                        (bpmRange == null || itemBpm == null || itemBpm in bpmRange) &&
+                        (key == null || itemKey == null || itemKey == key)
                 }
         }
 
