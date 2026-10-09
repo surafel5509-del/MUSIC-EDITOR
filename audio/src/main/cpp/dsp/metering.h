@@ -22,6 +22,15 @@ struct MeterSnapshot {
 
 class Meter {
 public:
+    // Atomics are neither copyable nor movable; metering state is transient,
+    // so copy/move simply start from fresh state (graph setup happens off the
+    // audio thread before processing starts).
+    Meter() = default;
+    Meter(const Meter&) : Meter() {}
+    Meter& operator=(const Meter&) { reset(); return *this; }
+    Meter(Meter&&) noexcept : Meter() {}
+    Meter& operator=(Meter&&) noexcept { reset(); return *this; }
+
     void prepare(double sampleRate) {
         sampleRate_ = sampleRate;
         // K-weighting pre-filter (simplified two-stage shelving).

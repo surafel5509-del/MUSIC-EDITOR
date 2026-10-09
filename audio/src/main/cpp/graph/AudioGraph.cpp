@@ -305,8 +305,8 @@ void AudioGraph::applyParams() noexcept {
             for (auto& bus : buses_) {
                 if (bus.id == nodeId) {
                     const size_t insertIndex = paramId >> 8;
-                    if (insertIndex < bus.inserts_.size()) {
-                        bus.inserts_[insertIndex]->setParameter(paramId & 0xFF, value);
+                    if (insertIndex < bus.inserts.size()) {
+                        bus.inserts[insertIndex]->setParameter(paramId & 0xFF, value);
                     }
                     return;
                 }
