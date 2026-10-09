@@ -12,6 +12,7 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.realtime.PostgresAction
 import io.github.jan.supabase.realtime.RealtimeChannel
+import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.broadcastFlow
 import io.github.jan.supabase.realtime.postgresChangeFlow
 import io.github.jan.supabase.realtime.realtime
@@ -62,7 +63,7 @@ class SupabaseCollabClient @Inject constructor(
         val state = connectionStates.getOrPut(projectId.value) { MutableStateFlow(CollabConnectionState.DISCONNECTED) }
         state.value = CollabConnectionState.CONNECTING
 
-        val channel = supabase.realtime.channel("project:${projectId.value}") {}
+        val channel = supabase.realtime.channel("project:${projectId.value}")
         channels[projectId.value] = channel
 
         // Ops arrive as broadcast messages on event "op".
@@ -76,15 +77,12 @@ class SupabaseCollabClient @Inject constructor(
                 }
         }
 
-        // Durable fallback: watch inserts into collab_ops (supabase-kt's
-        // PostgresChangeFilter has no server-side equality filter helper here,
-        // so rows are filtered client-side by project_id).
+        // Durable fallback: watch inserts into collab_ops for this project.
         scope.launch {
             channel.postgresChangeFlow<PostgresAction.Insert>(schema = "public") {
                 table = "collab_ops"
+                filter = "project_id=eq.${projectId.value}"
             }.collect { change ->
-                val rowProjectId = change.record["project_id"]?.jsonPrimitive?.content
-                if (rowProjectId != projectId.value) return@collect
                 val payload = change.record["op_json"]?.jsonPrimitive?.content ?: return@collect
                 val op = CollabOpSerializer.decode(payload) ?: return@collect
                 engine.observe(op.lamport)
